@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✨ IntelliAI — Your AI Buddy</title>
+    <meta name="description" content="Premium AI chatbot powered by Google Gemini with voice, file attachments, and beautiful UI">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <!-- Animated Background Orbs -->
+    <div class="bg-orbs" id="bgOrbs">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="orb orb-4"></div>
+        <div class="orb orb-5"></div>
+    </div>
+
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-inner">
+                <div class="sidebar-header">
+                    <div class="logo">
+                        <div class="logo-icon">
+                            <i class="fas fa-atom"></i>
+                            <div class="logo-ring"></div>
+                        </div>
+                        <div class="logo-text">
+                            <span class="logo-name">NexusAI</span>
+                            <span class="logo-badge">PRO</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="new-chat-btn" onclick="newChat()" id="newChatBtn">
+                    <i class="fas fa-plus"></i>
+                    <span>New Chat</span>
+                    <div class="btn-shine"></div>
+                </button>
+                
+                <div class="sidebar-menu">
+                    <div class="menu-label">Tools</div>
+                    <button class="menu-item" onclick="toggleHistoryPanel()" id="historyBtn">
+                        <i class="fas fa-clock-rotate-left"></i>
+                        <span>Chat History</span>
+                        <span class="menu-badge" id="historyCount">0</span>
+                    </button>
+                    <button class="menu-item" onclick="exportChat()" id="exportBtn">
+                        <i class="fas fa-arrow-up-from-bracket"></i>
+                        <span>Export Chat</span>
+                    </button>
+                    <button class="menu-item" onclick="clearChat()" id="clearBtn">
+                        <i class="fas fa-broom"></i>
+                        <span>Clear All</span>
+                    </button>
+                </div>
+
+                <!-- Chat History Panel -->
+                <div class="history-panel" id="historyPanel">
+                    <div class="history-panel-header">
+                        <span><i class="fas fa-clock-rotate-left"></i> Recent Chats</span>
+                        <button class="history-close-btn" onclick="toggleHistoryPanel()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="history-list" id="historyList">
+                        <div class="history-empty">
+                            <i class="fas fa-comments"></i>
+                            <p>No chats yet</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar-footer">
+                    <div class="user-card">
+                        <div class="user-avatar">
+                            <span>KV</span>
+                            <div class="online-dot"></div>
+                        </div>
+                        <div class="user-meta">
+                            <div class="user-name">User</div>
+                            <div class="user-plan">Pro Plan</div>
+                        </div>
+                    </div>
+                    <button class="theme-toggle" onclick="toggleTheme()" id="themeToggleBtn" title="Toggle theme">
+                        <i class="fas fa-moon" id="themeIcon"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Chat Area -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="chat-header">
+                <div class="header-left">
+                    <button class="hamburger-btn" onclick="toggleSidebar()" id="sidebarToggle">
+                        <span></span><span></span><span></span>
+                    </button>
+                    <div class="header-title">
+                        <div class="header-avatar">
+                            <i class="fas fa-robot"></i>
+                            <div class="header-status-dot"></div>
+                        </div>
+                        <div>
+                            <h1 id="headerTitle">🤖IntelliChat</h1>
+                            <span class="header-subtitle" id="headerSubtitle">Online — Ready to help</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <button class="header-action" onclick="exportChat()" title="Export" id="headerExportBtn">
+                        <i class="fas fa-arrow-up-from-bracket"></i>
+                    </button>
+                    <button class="header-action" onclick="clearChat()" title="Clear" id="headerClearBtn">
+                        <i class="fas fa-broom"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Chat Messages -->
+            <div class="chat-messages" id="chatMessages">
+                <div class="welcome-screen" id="welcomeScreen">
+                    <div class="welcome-glow"></div>
+                    <div class="welcome-icon-container">
+                        <div class="welcome-orbit">
+                            <div class="orbit-dot"></div>
+                        </div>
+                        <div class="welcome-orbit orbit-2">
+                            <div class="orbit-dot"></div>
+                        </div>
+                        <i class="fas fa-atom welcome-main-icon"></i>
+                    </div>
+                    <h2 class="welcome-title">Hello there! 👋</h2>
+                    <p class="welcome-sub">I'm NexusAI — your intelligent assistant.<br>Ask me anything, or try a suggestion below.</p>
+                    <div class="quick-actions">
+                        <button class="quick-card" onclick="sendQuickMessage('Explain quantum computing in simple terms')" id="quickQuantum">
+                            <div class="quick-icon"><i class="fas fa-atom"></i></div>
+                            <div class="quick-text">
+                                <span class="quick-label">Explain</span>
+                                <span class="quick-desc">Quantum Computing</span>
+                            </div>
+                        </button>
+                        <button class="quick-card" onclick="sendQuickMessage('Write a creative short story about AI')" id="quickStory">
+                            <div class="quick-icon"><i class="fas fa-pen-fancy"></i></div>
+                            <div class="quick-text">
+                                <span class="quick-label">Write</span>
+                                <span class="quick-desc">Creative Story</span>
+                            </div>
+                        </button>
+                        <button class="quick-card" onclick="sendQuickMessage('Give me 5 productivity tips for developers')" id="quickTips">
+                            <div class="quick-icon"><i class="fas fa-rocket"></i></div>
+                            <div class="quick-text">
+                                <span class="quick-label">Suggest</span>
+                                <span class="quick-desc">Productivity Tips</span>
+                            </div>
+                        </button>
+                        <button class="quick-card" onclick="sendQuickMessage('Write Python code for a REST API')" id="quickCode">
+                            <div class="quick-icon"><i class="fas fa-code"></i></div>
+                            <div class="quick-text">
+                                <span class="quick-label">Code</span>
+                                <span class="quick-desc">Python REST API</span>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Thinking Indicator -->
+            <div class="thinking-indicator" id="thinkingIndicator">
+                <div class="thinking-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="thinking-content">
+                    <div class="thinking-wave">
+                        <span></span><span></span><span></span><span></span><span></span>
+                    </div>
+                    <span class="thinking-text" id="thinkingText">AI is thinking</span>
+                    <div class="thinking-shimmer"></div>
+                </div>
+            </div>
+
+            <!-- File Preview -->
+            <div class="file-preview-area" id="filePreviewArea">
+                <div class="file-preview-card" id="filePreviewCard">
+                    <div class="file-icon-preview">
+                        <i class="fas fa-file" id="fileTypeIcon"></i>
+                    </div>
+                    <div class="file-details">
+                        <span class="file-name" id="fileNamePreview">filename.txt</span>
+                        <span class="file-size" id="fileSizePreview">0 KB</span>
+                    </div>
+                    <button class="file-remove-btn" onclick="removeAttachment()" id="fileRemoveBtn">
+                        <i class="fas fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="input-area">
+                <div class="input-container" id="inputContainer">
+                    <input type="file" id="fileInput" hidden accept="image/*,.pdf,.txt,.csv,.json,.md,.py,.js,.html,.css" />
+                    <button class="input-icon-btn" onclick="document.getElementById('fileInput').click()" title="Attach file" id="attachBtn">
+                        <i class="fas fa-paperclip"></i>
+                    </button>
+                    <textarea 
+                        id="userInput" 
+                        placeholder="Ask NexusAI anything..."
+                        rows="1"
+                    ></textarea>
+                    <button class="input-icon-btn voice-btn" id="voiceBtn" onclick="toggleVoice()" title="Voice input">
+                        <i class="fas fa-microphone" id="voiceIcon"></i>
+                        <div class="voice-rings"></div>
+                    </button>
+                    <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                        <i class="fas fa-arrow-up"></i>
+                    </button>
+                </div>
+                <div class="input-footer">
+                    <div class="input-info">
+                        <span id="charCount">0</span><span class="char-sep">/</span><span>2000</span>
+                    </div>
+                    <div class="input-info voice-indicator" id="voiceStatus">
+                        <span class="voice-recording-dot"></span>
+                        <span id="voiceStatusText">Listening...</span>
+                    </div>
+                    <div class="input-info">
+                        <span class="status-dot"></span>
+                        <span id="statusText">NexusAI Online</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <div class="toast-icon"><i class="fas fa-check-circle" id="toastIcon"></i></div>
+        <span id="toastMessage">Copied to clipboard!</span>
+        <div class="toast-progress"></div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
